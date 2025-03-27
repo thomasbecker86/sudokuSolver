@@ -21,7 +21,7 @@ public class Main {
         
     //    gui.updateFromBoard(logic.getBoard());
         
-        
+        /*
         int[][] exampleBoard = {
             {0, 3, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 1, 9, 5, 0, 0, 0},
@@ -34,6 +34,6 @@ public class Main {
             {0, 0, 0, 0, 0, 0, 0, 7, 0}
         };
         gui.updateFromBoard(exampleBoard);
-
+        */
     }
 }

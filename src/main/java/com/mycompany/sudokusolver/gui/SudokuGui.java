@@ -4,14 +4,22 @@
  */
 package com.mycompany.sudokusolver.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
@@ -24,12 +32,44 @@ public class SudokuGui extends JFrame {
     private JMenu menuFile;
     private JMenuItem menuItemSolve, menuItemClose;
     private JTextField[][] cells = new JTextField[9][9];
+    private JPanel controlArea, board;
+    private JTextArea output;
+    private JButton buttonSolve, buttonReset, buttonExample;
     
     
     public SudokuGui() {        
-        JPanel board = new JPanel();
-        board.setLayout(new GridLayout(3, 3));
-        board.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        this.createBoard();
+        this.createMenu();
+        this.createControlArea();
+        
+        this.output = new JTextArea(5, 20);
+        output.setEditable(false);
+        output.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Output Area"));
+        
+        this.setLayout(new BorderLayout());
+        this.add(board, BorderLayout.WEST);
+        this.add(controlArea, BorderLayout.EAST);
+        this.add(output, BorderLayout.SOUTH);
+        
+        /*
+        Container cp = getContentPane();
+        cp.setLayout(new BorderLayout());
+        cp.add(board, BorderLayout.NORTH);
+        cp.add(output, BorderLayout.SOUTH);
+        */
+        this.setTitle("Sudoku Solver");
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setSize(600, 600);
+        this.setMinimumSize(new Dimension(300, 300));
+        this.setLocationRelativeTo(null);
+        this.pack();
+        this.setVisible(true);
+    }
+    
+    private void createBoard() {
+        this.board = new JPanel();
+        this.board.setLayout(new GridLayout(3, 3));
+        this.board.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         for (int boxRow = 0; boxRow < 3; boxRow++) {
             for (int boxCol = 0; boxCol < 3; boxCol++) {
                 JPanel box = new JPanel();
@@ -43,25 +83,46 @@ public class SudokuGui extends JFrame {
                     cells[row][col] = field;
                     box.add(field);
                 }
-                board.add(box);
+                this.board.add(box);
             }
         }
-
         this.add(board);
-        this.setTitle("Sudoku Solver");
-        this.createMenu();        
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setSize(600, 600);
-        this.setLocationRelativeTo(null);
-        this.pack();
-        this.setVisible(true);
+    }
+    
+    private void createControlArea() {
+        this.controlArea = new JPanel();
+        //this.controlArea.setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+        this.controlArea.setLayout(new BoxLayout(controlArea, BoxLayout.Y_AXIS));
+        /*
+        this.controlArea.setLayout(new GridBagLayout());
+        GridBagConstraints menuConstraints = new GridBagConstraints();
+
+        menuConstraints.anchor = GridBagConstraints.WEST;
+        menuConstraints.weightx = 0.5;
+        menuConstraints.weighty = 0.5;
+        menuConstraints.gridwidth = 2;
+        menuConstraints.gridx = 2;
+        menuConstraints.gridy = 0;        
+        this.buttonSolve = new JButton("Solve");        
+        this.controlArea.add(buttonSolve, menuConstraints);
+        
+        menuConstraints.gridy = 1;
+        this.controlArea.add(buttonReset, menuConstraints);
+        */
+        this.buttonSolve = new JButton("Solve"); 
+        this.buttonReset = new JButton("Reset");
+        this.buttonExample = new JButton("Example");
+        
+        this.controlArea.add(this.buttonSolve);
+        this.controlArea.add(this.buttonReset);
+        this.controlArea.add(this.buttonExample);
     }
     
     private void createMenu() {
         this.menuBar = new JMenuBar();
-        this.menuFile = new JMenu("Datei");
-        this.menuItemSolve = new JMenuItem("Sudoku lösen");
-        this.menuItemClose = new JMenuItem("Beenden");
+        this.menuFile = new JMenu("File");
+        this.menuItemSolve = new JMenuItem("Solve");
+        this.menuItemClose = new JMenuItem("Exit");
         
         this.menuFile.add(menuItemSolve);
         this.menuFile.add(menuItemClose);
@@ -79,8 +140,24 @@ public class SudokuGui extends JFrame {
         return menuItemClose;
     }
 
+    public JButton getButtonSolve() {
+        return buttonSolve;
+    }
+
+    public JButton getButtonReset() {
+        return buttonReset;
+    }
+
+    public JButton getButtonExample() {
+        return buttonExample;
+    }
+    
     public JTextField[][] getCells() {
         return cells;
+    }
+    
+    public void setOutput(String text) {
+        this.output.setText(text);
     }
     
     //updates the GUI with values from the passed array

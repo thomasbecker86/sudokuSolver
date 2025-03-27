@@ -11,7 +11,7 @@ package com.mycompany.sudokusolver.model;
 public class SudokuLogic {
     
     private int[][] board = new int[9][9];
-
+    
     public int[][] getBoard() {
         return board;
     }
@@ -65,13 +65,12 @@ public class SudokuLogic {
     }
     
     //Converts all negative numbers (i.e. preallocated numbers) into positive numbers
-    private int[][] makePositive() {
+    private void makePositive() {
         for (int i = 0; i < this.board.length; i++) {
             for (int j = 0; j < this.board.length; j++) {
                 this.board[i][j] = Math.abs(this.board[i][j]);
             }
         }
-        return this.board;
     }
     //Converts all numbers into negative numbers, needs to be called by the solve-method to work
     private void makeNegative() {
@@ -82,7 +81,7 @@ public class SudokuLogic {
         }
     }
     
-    public int[][] solve() {
+    public String solve() {
         
         this.makeNegative();
         int position = 0;
@@ -93,8 +92,8 @@ public class SudokuLogic {
         while (position < 81) {
             counter++;
             if (position < 0) {
-                System.out.println("No solution found!");
-                break;
+            //    System.out.println("No solution found!");
+                return "No solution found!";
             }
             
             rowIndex = position / 9;
@@ -112,18 +111,23 @@ public class SudokuLogic {
                     position++;
                 } else {
                     this.board[rowIndex][columnIndex] = 0;
-                    do {
+                    try {
                         position--;
-                    } while (this.board[position / 9][position % 9] < 0);                    
-                }
+                        while (board[position / 9][position % 9] < 0) {
+                            position--;
+                        }
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        return "An error occured, check the input!";
+                    }
+                 }
             } else {
                 position++;
             }
         }
-        System.out.println("Number of loop cycles: " + counter + "\n");
+    //    System.out.println("Number of loop cycles: " + counter + "\n");
         
         this.makePositive();
         
-        return this.board;
+        return "Sudoku succesfully solved!\nNumber of loop cycles: " + counter + "\n";
     }
 }
