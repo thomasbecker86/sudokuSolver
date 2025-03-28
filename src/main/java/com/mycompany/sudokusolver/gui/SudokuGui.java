@@ -4,14 +4,14 @@
  */
 package com.mycompany.sudokusolver.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -45,18 +45,19 @@ public class SudokuGui extends JFrame {
         this.output = new JTextArea(5, 20);
         output.setEditable(false);
         output.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK), "Output Area"));
+ 
+        JPanel firstRow = new JPanel();
+        firstRow.setLayout(new BoxLayout(firstRow, BoxLayout.X_AXIS));
+        firstRow.add(board);
+        firstRow.add(Box.createRigidArea(new Dimension(10, 0)));
+        firstRow.add(controlArea);
+        firstRow.add(Box.createRigidArea(new Dimension(10, 0)));
         
-        this.setLayout(new BorderLayout());
-        this.add(board, BorderLayout.WEST);
-        this.add(controlArea, BorderLayout.EAST);
-        this.add(output, BorderLayout.SOUTH);
-        
-        /*
-        Container cp = getContentPane();
-        cp.setLayout(new BorderLayout());
-        cp.add(board, BorderLayout.NORTH);
-        cp.add(output, BorderLayout.SOUTH);
-        */
+        this.setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+        this.add(firstRow);
+        this.add(Box.createRigidArea(new Dimension(0, 10)));
+        this.add(output);
+
         this.setTitle("Sudoku Solver");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(600, 600);
@@ -86,35 +87,32 @@ public class SudokuGui extends JFrame {
                 this.board.add(box);
             }
         }
-        this.add(board);
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int size = Math.min(getWidth(), getHeight()); // Kleinere Dimension wählen
+                board.setPreferredSize(new Dimension(size, size));
+                board.revalidate();
+                board.repaint();
+            }
+        });
     }
     
     private void createControlArea() {
         this.controlArea = new JPanel();
-        //this.controlArea.setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         this.controlArea.setLayout(new BoxLayout(controlArea, BoxLayout.Y_AXIS));
-        /*
-        this.controlArea.setLayout(new GridBagLayout());
-        GridBagConstraints menuConstraints = new GridBagConstraints();
 
-        menuConstraints.anchor = GridBagConstraints.WEST;
-        menuConstraints.weightx = 0.5;
-        menuConstraints.weighty = 0.5;
-        menuConstraints.gridwidth = 2;
-        menuConstraints.gridx = 2;
-        menuConstraints.gridy = 0;        
-        this.buttonSolve = new JButton("Solve");        
-        this.controlArea.add(buttonSolve, menuConstraints);
-        
-        menuConstraints.gridy = 1;
-        this.controlArea.add(buttonReset, menuConstraints);
-        */
-        this.buttonSolve = new JButton("Solve"); 
+        this.buttonSolve = new JButton("Solve");
+        this.buttonSolve.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.buttonReset = new JButton("Reset");
+        this.buttonReset.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.buttonExample = new JButton("Example");
+        this.buttonExample.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        this.controlArea.add(this.buttonSolve);
+        this.controlArea.add(this.buttonSolve);        
+        this.controlArea.add(Box.createRigidArea(new Dimension(0, 10)));
         this.controlArea.add(this.buttonReset);
+        this.controlArea.add(Box.createRigidArea(new Dimension(0, 10)));
         this.controlArea.add(this.buttonExample);
     }
     

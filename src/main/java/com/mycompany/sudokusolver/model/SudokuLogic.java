@@ -117,6 +117,7 @@ public class SudokuLogic {
                             position--;
                         }
                     } catch (ArrayIndexOutOfBoundsException e) {
+                        this.makePositive();
                         return "An error occured, check the input!";
                     }
                  }
