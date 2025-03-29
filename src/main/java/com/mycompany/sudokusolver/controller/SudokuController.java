@@ -10,12 +10,15 @@ import com.mycompany.sudokusolver.model.SudokuLogic;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
  * @author Thomas
  */
-public class SudokuController implements ActionListener {
+public class SudokuController implements ActionListener, DocumentListener {
 
     private SudokuGui gui;
     private SudokuLogic logic;
@@ -34,6 +37,12 @@ public class SudokuController implements ActionListener {
         gui.getButtonSolve().addActionListener(this);
         gui.getButtonReset().addActionListener(this);
         gui.getButtonExample().addActionListener(this);
+        for (JTextField[] fields : gui.getCells()) {
+            for (JTextField field : fields) {
+                field.getDocument().addDocumentListener(this);
+            }
+            
+        }
     }
     
     @Override
@@ -55,6 +64,29 @@ public class SudokuController implements ActionListener {
         } else {
             throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }        
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        onInputChange(e);
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        onInputChange(e);
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+    public void onInputChange(DocumentEvent e) {
+        /*
+        if (!logic.checkRow(0, e.getDocument().)) {
+            
+        }
+        */
     }
     
 }

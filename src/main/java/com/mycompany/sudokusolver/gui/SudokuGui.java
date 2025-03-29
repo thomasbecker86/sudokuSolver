@@ -21,6 +21,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.PlainDocument;
 
 /**
  *
@@ -81,6 +83,13 @@ public class SudokuGui extends JFrame {
                     int row = boxRow * 3 + cell / 3;
                     int col = boxCol * 3 + cell % 3;                    
                     field.setHorizontalAlignment(JTextField.CENTER);
+                    
+                    field.putClientProperty("row", row);
+                    field.putClientProperty("col", col);
+                    field.setDocument(new PlainDocument());
+                    InputFilter inputFilter = new InputFilter();
+                    ((AbstractDocument)field.getDocument()).setDocumentFilter(inputFilter);                    
+                    
                     cells[row][col] = field;
                     box.add(field);
                 }
