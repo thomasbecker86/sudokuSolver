@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
-import javax.swing.text.PlainDocument;
 
 /**
  *
@@ -40,6 +39,10 @@ public class SudokuGui extends JFrame {
     
     
     public SudokuGui() {        
+        initGui();
+    }
+    
+    private void initGui() {
         this.createBoard();
         this.createMenu();
         this.createControlArea();
@@ -82,14 +85,9 @@ public class SudokuGui extends JFrame {
                     JTextField field = new JTextField(2);
                     int row = boxRow * 3 + cell / 3;
                     int col = boxCol * 3 + cell % 3;                    
-                    field.setHorizontalAlignment(JTextField.CENTER);
-                    
+                    field.setHorizontalAlignment(JTextField.CENTER);                    
                     field.putClientProperty("row", row);
                     field.putClientProperty("col", col);
-                    field.setDocument(new PlainDocument());
-                    InputFilter inputFilter = new InputFilter();
-                    ((AbstractDocument)field.getDocument()).setDocumentFilter(inputFilter);                    
-                    
                     cells[row][col] = field;
                     box.add(field);
                 }
@@ -169,6 +167,7 @@ public class SudokuGui extends JFrame {
     
     //updates the GUI with values from the passed array
     public void updateFromBoard(int[][] board) {
+    //    this.inputFilter.setInternalUpdate(true);
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
                 if (board[row][col] != 0) {
@@ -178,6 +177,7 @@ public class SudokuGui extends JFrame {
                 }
             }
         }
+    //    this.inputFilter.setInternalUpdate(false);
     }
     
     //reads values from the GUI and returns them as an array
@@ -194,5 +194,14 @@ public class SudokuGui extends JFrame {
             }
         }
         return board;
+    }
+
+    public void setInputFilter(InputFilter filter) {
+        for (int i = 0; i < cells.length; i++) {
+            for (int j = 0; j < cells[0].length; j++) {
+                ((AbstractDocument)cells[i][j].getDocument()).setDocumentFilter(filter);
+                ((AbstractDocument)cells[i][j].getDocument()).putProperty("owner", cells[i][j]);
+            }
+        }
     }
 }

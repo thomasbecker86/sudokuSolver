@@ -15,8 +15,8 @@ import com.mycompany.sudokusolver.model.SudokuLogic;
 public class Main {
     
     public static void main(String[] args) {
-        SudokuGui gui = new SudokuGui();
         SudokuLogic logic = new SudokuLogic();
+        SudokuGui gui = new SudokuGui();        
         SudokuController controller = new SudokuController(gui, logic);
     }
 }

@@ -57,8 +57,9 @@ public class ExampleBoards {
         int rand = (int) (Math.random() * exampleBoards.size());
         return exampleBoards.get(rand);
     }
-    
+    /*
     public void addExampleBoard(int[][] newBoard) {
         exampleBoards.add(newBoard);
     }
+    */
 }

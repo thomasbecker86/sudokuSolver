@@ -4,31 +4,38 @@
  */
 package com.mycompany.sudokusolver.controller;
 
+import com.mycompany.sudokusolver.gui.InputFilter;
 import com.mycompany.sudokusolver.gui.SudokuGui;
 import com.mycompany.sudokusolver.model.ExampleBoards;
 import com.mycompany.sudokusolver.model.SudokuLogic;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 /**
  *
  * @author Thomas
  */
-public class SudokuController implements ActionListener, DocumentListener {
+public class SudokuController implements ActionListener {
 
     private SudokuGui gui;
     private SudokuLogic logic;
+    private InputFilter inputFilter;
     private ExampleBoards exampleBoards = new ExampleBoards();
     
-    public SudokuController(SudokuGui view, SudokuLogic logic) {
-        this.gui = view;
+    public SudokuController(SudokuGui gui, SudokuLogic logic) {
+        this.gui = gui;
         this.logic = logic;
+        this.inputFilter = new InputFilter(logic);
+        this.gui.setInputFilter(inputFilter);
         initListeners();
-        this.gui.updateFromBoard(this.exampleBoards.getExampleBoard());
+        
+        int[][] newExampleBoard = this.exampleBoards.getExampleBoard();
+        this.logic.setBoard(newExampleBoard);
+        
+        inputFilter.setInternalUpdate(true);
+        this.gui.updateFromBoard(this.logic.getBoard());
+        inputFilter.setInternalUpdate(false);
     }
 
     private void initListeners() {
@@ -37,56 +44,35 @@ public class SudokuController implements ActionListener, DocumentListener {
         gui.getButtonSolve().addActionListener(this);
         gui.getButtonReset().addActionListener(this);
         gui.getButtonExample().addActionListener(this);
-        for (JTextField[] fields : gui.getCells()) {
-            for (JTextField field : fields) {
-                field.getDocument().addDocumentListener(this);
-            }
-            
-        }
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == gui.getMenuItemClose()) {
-            if (JOptionPane.showConfirmDialog(this.gui, "Spiel beenden?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == 0) System.exit(0);
+            if (JOptionPane.showConfirmDialog(this.gui, "Close the game?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == 0) System.exit(0);
         } else if (e.getSource() == gui.getMenuItemSolve() || e.getSource() == gui.getButtonSolve()) {            
             this.logic.setBoard(this.gui.readToBoard());            
-            String message = this.logic.solve();            
+            String message = this.logic.solve();
+            inputFilter.setInternalUpdate(true);
             this.gui.updateFromBoard(this.logic.getBoard());
+            inputFilter.setInternalUpdate(false);
             this.gui.setOutput(message);            
         } else if (e.getSource() == gui.getButtonReset()) {
             int[][] newBoard = new int[9][9];
             this.logic.setBoard(newBoard);
+            inputFilter.setInternalUpdate(true);
             this.gui.updateFromBoard(newBoard);
+            inputFilter.setInternalUpdate(false);
             this.gui.setOutput("");
         } else if (e.getSource() == gui.getButtonExample()) {
-            this.gui.updateFromBoard(this.exampleBoards.getExampleBoard());
+            int[][] newExampleBoard = this.exampleBoards.getExampleBoard();            
+            this.logic.setBoard(newExampleBoard);
+            logic.printSodoku();
+            inputFilter.setInternalUpdate(true);
+            this.gui.updateFromBoard(this.logic.getBoard());
+            inputFilter.setInternalUpdate(false);
         } else {
             throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }        
     }
-
-    @Override
-    public void insertUpdate(DocumentEvent e) {
-        onInputChange(e);
-    }
-
-    @Override
-    public void removeUpdate(DocumentEvent e) {
-        onInputChange(e);
-    }
-
-    @Override
-    public void changedUpdate(DocumentEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-    
-    public void onInputChange(DocumentEvent e) {
-        /*
-        if (!logic.checkRow(0, e.getDocument().)) {
-            
-        }
-        */
-    }
-    
 }

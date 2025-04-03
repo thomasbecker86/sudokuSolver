@@ -4,6 +4,8 @@
  */
 package com.mycompany.sudokusolver.model;
 
+import java.util.Arrays;
+
 /**
  *
  * @author Thomas
@@ -17,7 +19,10 @@ public class SudokuLogic {
     }
     
     public void setBoard(int[][] newBoard) {
-        this.board = newBoard;
+        this.board = new int[newBoard.length][];
+        for (int i = 0; i < newBoard.length; i++) {
+            this.board[i] = Arrays.copyOf(newBoard[i], newBoard[i].length);
+        }
     }
     
     public void printSodoku() {
@@ -31,7 +36,7 @@ public class SudokuLogic {
     }
     
     //Checks if a given candidate can be inserted into the current row
-    private boolean checkRow(int rowIndex, int candidate) {
+    public boolean checkRow(int rowIndex, int candidate) {
         for (int columnIndex = 0; columnIndex < this.board[rowIndex].length ; columnIndex++) {
             if (candidate == Math.abs(this.board[rowIndex][columnIndex])) {
                 return false;
@@ -41,7 +46,7 @@ public class SudokuLogic {
     }
     
     //Checks if a given candidate can be inserted into the current column
-    private boolean checkColumn(int columnIndex, int candidate) {
+    public boolean checkColumn(int columnIndex, int candidate) {
         for (int rowIndex = 0; rowIndex < this.board.length; rowIndex++) {
             if (candidate == Math.abs(this.board[rowIndex][columnIndex])) {
                 return false;
@@ -51,7 +56,7 @@ public class SudokuLogic {
     }
     
     //Checks if a given candidate can be inserted into the current subgrid
-    private boolean checkSubgrid(int rowIndex, int columnIndex, int candidate) {
+    public boolean checkSubgrid(int rowIndex, int columnIndex, int candidate) {
         int startRowIndex = (rowIndex / 3) * 3;
         int startColumnIndex = (columnIndex / 3) * 3;
         for (int i = startRowIndex; i < startRowIndex + 3; i++) {
@@ -62,6 +67,14 @@ public class SudokuLogic {
             }            
         }
         return true;
+    }
+    
+    public void insertValue(int rowIndex, int columnIndex, int value) {
+        this.board[rowIndex][columnIndex] = value;
+    }
+    
+    public void removeValue(int rowIndex, int columnIndex) {
+        this.board[rowIndex][columnIndex] = 0;
     }
     
     //Converts all negative numbers (i.e. preallocated numbers) into positive numbers
